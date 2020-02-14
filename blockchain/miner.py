@@ -31,7 +31,7 @@ def proof_of_work(last_proof):
     while valid_proof(string_object, proof) is False:
         counter += 1
         proof = counter * random.getrandbits(7)
-        if counter > 25000000:
+        if counter > 2500000:
              return proof
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
@@ -46,10 +46,14 @@ def valid_proof(last_hash, proof):
 
     IE:  last_hash: ...AE9123456, new hash 123456E88...
     """
-
+    prev_proof = f'{last_hash}'.encode()
+    prev_hash = hashlib.sha256(prev_proof).hexdigest()
     guess = f'{proof}'.encode()
     guess_hash = hashlib.sha256(guess).hexdigest()
-    return guess_hash[:6] == last_hash[-6:]
+    if guess_hash[:6] == prev_hash[-6:]:
+        print(guess_hash)
+        print(prev_hash)
+    return guess_hash[:6] == prev_hash[-6:]
 
 if __name__ == '__main__':
     # What node are we interacting with?
