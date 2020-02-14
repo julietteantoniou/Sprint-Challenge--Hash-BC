@@ -8,6 +8,7 @@ from uuid import uuid4
 from timeit import default_timer as timer
 
 import random
+import json
 
 
 def proof_of_work(last_proof):
@@ -23,8 +24,15 @@ def proof_of_work(last_proof):
     start = timer()
 
     print("Searching for next proof")
-    proof = 0
-    #  TODO: Your code here
+    proof = 17
+    counter = 0
+    string_object = json.dumps(last_proof, sort_keys=True)
+
+    while valid_proof(string_object, proof) is False:
+        counter += 1
+        proof = counter * random.getrandbits(7)
+        if counter > 25000000:
+             return proof
 
     print("Proof found: " + str(proof) + " in " + str(timer() - start))
     return proof
@@ -39,9 +47,9 @@ def valid_proof(last_hash, proof):
     IE:  last_hash: ...AE9123456, new hash 123456E88...
     """
 
-    # TODO: Your code here!
-    pass
-
+    guess = f'{proof}'.encode()
+    guess_hash = hashlib.sha256(guess).hexdigest()
+    return guess_hash[:6] == last_hash[-6:]
 
 if __name__ == '__main__':
     # What node are we interacting with?
